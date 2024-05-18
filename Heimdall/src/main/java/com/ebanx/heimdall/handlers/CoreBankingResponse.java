@@ -7,7 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CoreBankingResponse {
 
-    private boolean isQrCodeSameOwner;
-    private String teste;
+    private String isQrCodeSameOwner;
 
 }

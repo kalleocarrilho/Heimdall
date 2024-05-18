@@ -1,5 +1,7 @@
 package com.ebanx.heimdall.service;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -12,9 +14,34 @@ import jakarta.annotation.Resource;
 @Service
 public class EvaluationService {
 
-    public void evaluateNotification(Long payeeId) {
-        List<Rule> rules = ruleService.listRulesByPayeeId(payeeId);
+    public List<Rule> evaluateNotification(Long payeeId) {
         CoreBankingResponse handle = coreBankingHandler.handle();
+
+        List<Rule> rules = findRules();
+
+        rules.stream().forEach(rule -> {
+            if(!rule.getSecondField().equals(handle.getIsQrCodeSameOwner())) {
+                rules.remove(rule);
+            }
+        });
+
+        return rules;
+    }
+
+    private List<Rule> findRules() {
+        List<Rule> rules = ruleService.listRulesByPayeeId(1L);
+
+        List<Rule> responseRules = new ArrayList<>();
+
+        for (Rule rule : rules) {
+            Field[] fields = CoreBankingResponse.class.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.getName().equals(rule.getFirstField())) {
+                    responseRules.add(rule);
+                }
+            }
+        }
+        return responseRules;
     }
 
     @Resource

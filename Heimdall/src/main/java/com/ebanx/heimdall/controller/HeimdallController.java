@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ebanx.heimdall.handlers.CoreBankingHandler;
 import com.ebanx.heimdall.model.Rule;
+import com.ebanx.heimdall.service.EvaluationService;
 import com.ebanx.heimdall.service.RuleService;
 import jakarta.annotation.Resource;
 
@@ -16,18 +17,17 @@ import jakarta.annotation.Resource;
 public class HeimdallController {
 
     @GetMapping("/evaluate")
-    public String evaluateNotification(Long payeeId) {
-        List<Rule> rules = RuleService.listRulesByPayeeId(payeeId);
-
-        return rules.stream()
-                .map(rule -> rule.getId().toString())
-                .collect(Collectors.joining(", "));
+    public List<Rule> evaluateNotification(Long payeeId) {
+        return evaluationService.evaluateNotification(payeeId);
     }
 
     @GetMapping("/teste")
-    public void getTeste() {
-        coreBankingHandler.handle();
+    public List<Rule> getTeste() {
+        return evaluationService.evaluateNotification(1L);
     }
+
+    @Resource
+    private EvaluationService evaluationService;
 
     @Resource
     private CoreBankingHandler coreBankingHandler;
