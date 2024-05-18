@@ -17,19 +17,22 @@ public class EvaluationService {
     public List<Rule> evaluateNotification(Long payeeId) {
         CoreBankingResponse handle = coreBankingHandler.handle();
 
-        List<Rule> rules = findRules();
+        List<Rule> rules = findRules(payeeId);
 
         rules.stream().forEach(rule -> {
-            if(!rule.getSecondField().equals(handle.getIsQrCodeSameOwner())) {
-                rules.remove(rule);
+
+            if (rule.getOperator().equals("==")) {
+                if (!rule.getSecondField().equals(handle.getIsQrCodeSameOwner())) {
+                    rules.remove(rule);
+                }
             }
         });
 
         return rules;
     }
 
-    private List<Rule> findRules() {
-        List<Rule> rules = ruleService.listRulesByPayeeId(1L);
+    private List<Rule> findRules(Long payeeId) {
+        List<Rule> rules = ruleService.listRulesByPayeeId(payeeId);
 
         List<Rule> responseRules = new ArrayList<>();
 
