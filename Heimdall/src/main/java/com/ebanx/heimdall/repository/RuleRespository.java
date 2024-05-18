@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.ebanx.heimdall.model.Rule;
 
 @Repository
-public abstract class RuleRespository implements JpaRepository<Rule, Long>{
+public interface RuleRespository extends JpaRepository<Rule, Long>{
 
-    public abstract List<Rule> findByPayeeId(String payeeId);
+    List<Rule> findByPayeeId(Long payeeId);
 
 }
