@@ -7,15 +7,16 @@ import com.google.gson.Gson;
 import jakarta.annotation.Nullable;
 
 @Component
-public class CoreBankingHandler {
+public class PayHandler {
 
     @Nullable
-    public CoreBankingResponse handle() {
+    public PayResponse handle() {
         HttpClient client = new HttpClient();
         try {
+
             String response = client.sendGetRequest(webhookUrl);
             Gson gson = new Gson();
-            return gson.fromJson(response, CoreBankingResponse.class);
+            return gson.fromJson(response, PayResponse.class);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -23,7 +24,7 @@ public class CoreBankingHandler {
         return null;
     }
 
-    @Value("${heimdall.coreBanking.url}")
+    @Value("${heimdall.pay.url}")
     private String webhookUrl;
 
 }
